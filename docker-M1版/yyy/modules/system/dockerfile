@@ -1,0 +1,18 @@
+# 基础镜像
+FROM  openjdk:8-jre
+# author
+MAINTAINER yyy
+
+# 挂载目录  给镜像设置挂载目录
+VOLUME /home/yyy
+# 创建目录  给镜像创建目录
+RUN mkdir -p /home/yyy
+# 指定路径  给镜像指定路径  这样可以当我们 docker exec -it xxx  bash  进入容器时能立刻到/home/yyy
+WORKDIR /home/yyy
+# 复制jar文件到路径  拷贝到容器中的/home/yyy目录下
+COPY ./jar/yyy-modules-system.jar /home/yyy/yyy-modules-system.jar
+################################以上可以完成一套流程从指定到创建到使用，如果想使用可以参照上面写法##################################
+# 启动系统服务
+ENTRYPOINT ["java","-jar","yyy-modules-system.jar"]
+
+#这里copy过去的  在docker-compose都能在volumes: 看到再写一次挂载(包括我们自己新建的或者已经存在的，我们也可以按照这种写法  注意是可写可不写)

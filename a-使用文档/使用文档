@@ -1,0 +1,492 @@
+服务模块访问swagger
+http://127.0.0.1:9201/swagger-ui/index.html
+
+而直接通过模块去访问接口，不会经过网关拦截，则不需要认证也可以直接访问接口
+
+
+如果启动了网关就可以这样访问
+http://127.0.0.1:8080/swagger-ui/index.html
+然后选择已经启动的模块，这时就可以看到接口
+
+通过网关去访问接口时会根据是否有忽略放行的路径，否则都需要去认证token（此时想认证成功就得在启动auth模块）
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+模块添加swagger功能
+1、启动类加上注解 @EnableCustomSwagger2
+2、pom文件加入依赖
+            <!-- Swagger UI -->
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger-ui</artifactId>
+                <version>${swagger.fox.version}</version>
+            </dependency>
+            <!-- yyy Common Swagger -->
+            <dependency>
+                <groupId>com.yyy</groupId>
+                <artifactId>yyy-common-swagger</artifactId>
+            </dependency>
+3、yaml文件配置
+    # swagger配置
+    swagger:
+      title: 权限模块接口文档
+      license: Powered By yyy
+      licenseUrl: https://yyy.vip
+
+到这一步已经可以通过服务模块去访问swagger
+
+4、如果想通过网关统一访问，需要注释网关配置的一些代码 SwaggerProvider
+注释掉两行代码
+    .filter(predicateDefinition -> "Path".equalsIgnoreCase(predicateDefinition.getName()))
+    .filter(predicateDefinition -> !"yyy-auth".equalsIgnoreCase(routeDefinition.getId()))
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+注意调用登录接口时，启动auth模块是不够的，auth模块远程调用了system模块，所以还要启动system模块
+
+登录用户名 admin
+登录密码 admin123
+
+如果不知道密码，可以全局搜索看  encryptPassword  这个方法，重新生成密码
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+调用接口如何携带token
+第一种通过postMan访问接口
+
+key值   Authorization
+value值  xxxxxtokenxxxxx
+
+
+第二种通过swagger - 网关模块
+value值  xxxxxtokenxxxxx
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+如何使用远程调用
+首先启动调用的接口方的服务模块要启动和被调用方的服务模块要启动
+一个有启动类的服务就建立一个yyy-api-xxx的模块，包名跟它的包名层级一致
+其他服务想引用，直接引用yyy-api-xxx的依赖
+
+注意创建远程调用接口时
+    映射的路径一定要全路径(controller层的前缀或者服务的请求前缀 加上当前请求的路径)
+    请求参数一定要保持一致
+    远程调用接口名可以不一致 但是尽量保持一致方便区分
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+上传文件时报错，不是因为超过了设置的文件大小，而是默认springboot的tomcat默认上传文件大小是1MB，需要设置
+spring:
+  servlet:
+    multipart:
+      max-file-size: 5MB
+
+tomcat这边 优先触发
+当设置为-1时，表示tomcat这边无限制，但是我们配置不能超过50MB的配置，超过时也会抛出异常
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+想要日志输入sql语句时，logback.xml文件的输出方式改为debug
+        <!-- 系统模块日志级别控制  -->
+    	<logger name="com.yyy" level="debug" />
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+如何使用分页
+例如
+    @RequiresPermissions("tool:gen:list")
+    @GetMapping("/list")
+    public TableDataInfo genList(GenTableVO GenTableVO)
+    {
+        startPage();
+        List<GenTableVO> list = genTableService.selectGenTableList(GenTableVO);
+        return getDataTable(list);
+    }
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+获取登录人信息的两种方式
+TokenService
+SecurityUtils
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+模块整合mybatis-plus
+1、引入依赖
+        <dependency>
+            <groupId>com.yyy</groupId>
+            <artifactId>yyy-common-datasource</artifactId>
+        </dependency>
+2、修改yaml文件，和扫描包路径
+2.1、这一部分直接替换 datasource部分
+datasource:
+    druid:
+      stat-view-servlet:
+        enabled: true
+        loginUsername: admin
+        loginPassword: 123456
+    dynamic:
+      druid:
+        initial-size: 5
+        min-idle: 5
+        maxActive: 20
+        maxWait: 60000
+        timeBetweenEvictionRunsMillis: 60000
+        minEvictableIdleTimeMillis: 300000
+        validationQuery: SELECT 1 FROM DUAL
+        testWhileIdle: true
+        testOnBorrow: false
+        testOnReturn: false
+        poolPreparedStatements: true
+        maxPoolPreparedStatementPerConnectionSize: 20
+        filters: stat,slf4j
+        connectionProperties: druid.stat.mergeSql\=true;druid.stat.slowSqlMillis\=5000
+      datasource:
+          # 主库数据源
+          master:
+            driver-class-name: com.mysql.cj.jdbc.Driver
+            url: jdbc:mysql://localhost:3306/yyy-cloud?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+            username: root
+            password: lf18289339306
+          # 从库数据源
+          # slave:
+            # username:
+            # password:
+            # url:
+            # driver-class-name:
+
+2.2、
+原本 typeAliasesPackage: com.yyy.gen.domain
+替换 typeAliasesPackage: com.yyy.gen
+
+3、实体类、server类、mapper对象都添加mybatis-plus通用类
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+如何使用定时器
+
+在RyTask 创建定时方法
+然后在数据库sys_job表添加定时器记录
+当项目启动时，会查出所有记录，包括新添加的记录，此时重新初始化跑定时器，所以不用担心手动添加定时器，会不生效---这种方式一定要重启服务
+（通过图形界面添加定时的原理也是如此，不过它添加定时器时，自动把它放到定时器里面跑，所以不重启也会生效）
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+使用mybatis-plus自动填充功能时，如果出现空指针报错，多半是创建人没有从上下文中获取到就进行赋值导致报错，
+必须统一通过网关访问，获取到了token并存到了上下文，在携带token访问接口时就可以获取到登录人的信息，进行自动填充
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+部署详情查看下面连接
+https://blog.csdn.net/zht3306/article/details/124687425?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522168602279916800227471915%2522%252C%2522scm%2522%253A%252220140713.130102334..%2522%257D&request_id=168602279916800227471915&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-1-124687425-null-null.142^v88^control_2,239^v2^insert_chatgpt&utm_term=ruoyi%E5%BE%AE%E6%9C%8D%E5%8A%A1%E9%83%A8%E7%BD%B2&spm=1018.2226.3001.4187
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+如何创建一个服务
+拷贝system服务，然后改名字
+注意：iml文件，他是关乎到启动类的，所以除了改名字，还要到 Edit Configuration 里面改一下路径，不然它还是指向原来system模块的启动路径
+
+或者手动创建
+Name: 用yyy-xxx
+ArtifactId: 用yzz-xxx
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+yyy-gateway模块详解
+
+1.自定义的过滤器继承了   GlobalFilter （全局过滤器）
+当前项目通过实现GlobalFilter和Ordered这两个接口中的filter（进行全局过滤）和getOrder（指定过滤器的优先级）方法
+    表示应用到所有的路由上（无需配置，注入到IOC容器中即可全局生效）  例如： AuthFilter 自定义过滤器
+    多个 GlobalFilter 可以通过 @Order 或者 getOrder() 方法指定执行顺序，order值越小，执行的优先级越高。
+
+2.自定义的过滤器继承了  GatewayFilter（局部过滤器）
+    表示可以应用到单个路由或者一个分组的路由上（需要在配置文件中配置）
+    例如：ValidateCodeFilter (验证码过滤器)  BlackListUrlFilter (黑名单过滤器)   CacheRequestFilter （获取body请求数据过滤器）
+
+
+3.一旦路由的微服务下线或者失联了，Spring Cloud Gateway直接返回了一个错误页面
+    所以我们可以定义一个自定义全局异常处理器  实现 ErrorWebExceptionHandler，重写其中的 handle 方法
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+gateway 整合 sentinel 实现网关限流
+
+1、添加 sentinel 相关依赖
+    spring-cloud-starter-alibaba-sentinel
+    spring-cloud-alibaba-sentinel-gateway
+    sentinel-datasource-nacos
+2、yaml中添加 sentinel 控制台的配置
+        sentinel:
+          # 取消控制台懒加载
+          eager: true
+          transport:
+            # 控制台地址
+            dashboard: 127.0.0.1:8081
+          # nacos配置持久化
+          datasource:
+            ds1:
+              nacos:
+                server-addr: 127.0.0.1:8848
+                dataId: sentinel-yyy-gateway
+                groupId: DEFAULT_GROUP
+                data-type: json
+                rule-type: gw-flow
+3、启动网关项目
+4、访问 sentinel 控制台：
+​      至此，我们就已经将 Spring Cloud Gateway 与 Sentinel 整合好了，进入 sentinel 控制台就能够看到网关项目被监控了
+
+
+网关限流了，服务就安全了吗？
+​        如果已经在网关层面做了限流，那么躲在身后的服务是否就安全了呢？答案是否定的
+        最常见的方案：网关层集群限流+内部服务的单机限流兜底，这样才能保证不被流量冲垮。
+
+所以得出，我们想给其他服务加入限流的话，也可以按照上面步骤即可
+    添加依赖：只需要
+        spring-cloud-starter-alibaba-sentinel
+        sentinel-datasource-nacos
+    注意：网关那里添加了一个限流异常处理方法，这样的话，我们也得添加一个限流异常处理方法
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+过滤器 和 拦截器的触发时机？？？？
+
+过滤器Filter是在请求进入容器后，但在进入servlet之前进行预处理，请求结束是在servlet处理完以后。（例如网关的过滤器）
+拦截器 Interceptor 是在请求进入servlet后，在进入Controller之前进行预处理的，Controller 中渲染了对应的视图之后请求结束。（例如权限验证访问）
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+权限验证主要用到三个
+@RequiresRoles
+@RequiresPermissions
+@RequiresRoles
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+注意
+注意   自定义starter相关知识
+注意
+
+常用注入到spring容器的注解   @Configuration、@component、@service 等等
+
+但是加了以上的注解，是还没真正的在ioc容器创建
+解决办法：
+    方法1：
+        1）创建一个类 xxxApplication，加上注解 @componentscan 和(@ConfigurationPropertiesScan 看情况加-需要读取配置文件的时候加)主要是标注需要扫描哪些包路径
+        2）定义META-INF.spring下的配置文件 里面指定加载加了注解@componentscan的类即可
+    方法2：定义META-INF.spring下的配置文件 里面指定加载所有类加了注解@Configuration、@component、@service、@ConfigurationProperties 等等
+两种方法随意选择、当前项目选用了第二种
+
+
+@componentscan
+这个注解主要是标注需要扫描哪些包路径。该路径下标注了@service, @controller,@repository, @component的类，
+都将被注入到容器中。除了这四个标签，包路径下标注了@configuration类，也会被注入到容器中。
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+正常的在springboot项目创建线程池   下面例子看不明白的话，可以看例子MqThreadExecutor，也是如此实现
+
+1、第一步 也可以省略
+在yaml文件定义线程池参数
+task:
+  pool:
+    corePoolSize: 5 #设置核心线程数
+    maxPoolSize: 20  #设置最大线程数
+    keepAliveSeconds: 300 #设置线程活跃时间（秒）
+    queueCapacity: 50 #设置队列容量
+然后创建线程池配置属性类TaskThreadPoolConfig.java并使用注解读取配置文件的参数
+@Data
+@ConfigurationProperties(prefix = "task.pool")
+@Component
+public class TaskThreadPoolConfig {
+    private int corePoolSize;
+    private int maxPoolSize;
+    private int keepAliveSeconds;
+    private int queueCapacity;
+}
+
+
+
+2、第二步
+创建一个线程池的配置类
+@Configuration
+@EnableAsync
+public class TaskExecutePool {
+
+    @Autowired
+    private TaskThreadPoolConfig config;
+
+    /**
+     * 1.这种形式的线程池配置是需要在使用的方法上面@Async("taskExecutor"),
+     * 2.如果在使用的方法上面不加该注解那么spring就会使用默认的线程池
+     * 3.所以如果加@Async注解但是不指定使用的线程池，又想自己定义线程池那么就可以重写spring默认的线程池
+     * 4.所以第二个方法就是重写默认线程池
+     * 注意：完全可以把线程池的参数写到配置文件中
+     */
+
+    @Bean
+    public Executor taskExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        //核心线程池大小
+        executor.setCorePoolSize(config.getCorePoolSize());
+        //最大线程数
+        executor.setMaxPoolSize(config.getMaxPoolSize());
+        //队列容量
+        executor.setQueueCapacity(config.getQueueCapacity());
+        //活跃时间
+        executor.setKeepAliveSeconds(config.getKeepAliveSeconds());
+        //线程名字前缀
+        executor.setThreadNamePrefix("TaskExecutePool-");
+
+        // setRejectedExecutionHandler：当pool已经达到max size的时候，如何处理新任务
+        // CallerRunsPolicy：不在新线程中执行任务，而是由调用者所在的线程来执行
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+         // 等待所有任务结束后再关闭线程池
+        executor.setWaitForTasksToCompleteOnShutdown(true); //不是必须设置，但建议设置
+        executor.initialize();
+        return executor;
+    }
+}
+
+3、第三步 使用
+在使用的方法上面@Async("taskExecutor")
+例如在service层实现类的重写方法加入@Async就变成了异步方法  注意注意 @Async通常用在service层，反正都是用在定义逻辑方法上，然后给接口调用
+然后在controller调用，就会异步执行
+
+@Component
+@Slf4j
+public class xxServiceImpl implements xxService {
+
+    @Override
+    @Async
+    public void doTask1() {
+        long t1 = System.currentTimeMillis();
+        Thread.sleep(3000);
+        long t2 = System.currentTimeMillis();
+        log.info("task2 cost {} ms" , t2-t1);
+    }
+}
+
+    @Autowired
+    private xxService service;
+
+    @RequestMapping("/task")
+    public void task() throws InterruptedException {
+        long t1 = System.currentTimeMillis();
+        service.doTask1();
+        Thread.sleep(1000);
+        long t2 = System.currentTimeMillis();
+        log.info("main cost {} ms", t2-t1);
+    }
+
+可以发现主线程不需要等待异步方法执行完成，减少了响应时间，提高了接口性能。
+
+__________________________________________________________________
+？？？？？为什么见有时候不是用@Async，而是直接使用executor出现在方法体里面
+例如
+for(int i=0;i<1000;i++){
+    final long userId = i;
+    Runnable task = () -> {
+        Result result = seckillDistributedService.startSeckilRedisLock(killId, userId);
+        LOGGER.info("用户:{}{}",userId,result.get("msg"));
+    };
+    executor.execute(task);
+}
+怎么改造
+定义一个异步方法，内容为调用 seckillDistributedService.startSeckilRedisLock这个方法
+然后在定义定义一个控制层接口，for循环1000次调用刚定义好的异步方法
+这样的话 1000个线程处理seckillDistributedService.startSeckilRedisLock这个方法是同时进行的
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+为甚么启动某些服务时，会自动加载查询数据库
+
+是因为使用了注解 @PostConstruct
+    /**
+     * 项目启动时，初始化参数到缓存
+     */
+    @PostConstruct
+    public void init()
+    {
+        loadingConfigCache();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,18 @@
+# 基础镜像
+FROM nginx
+# author
+MAINTAINER yyy
+
+# 挂载目录  给镜像设置挂载目录
+VOLUME /home/yyy/projects/yyy-ui
+# 创建目录   给镜像创建目录
+RUN mkdir -p /home/yyy/projects/yyy-ui
+# 指定路径   给镜像指定路径
+WORKDIR /home/yyy/projects/yyy-ui
+# 复制html文件到路径  开始复制
+COPY ./html/dist /home/yyy/projects/yyy-ui
+################################以上可以完成一套流程从指定到创建到使用，如果想使用可以参照上面写法##################################
+# 复制conf文件到路径   左边是自己现有的目录    右边是镜像里面拥有的目录
+COPY ./conf/nginx.conf /etc/nginx/nginx.conf
+
+#这里copy过去的  在docker-compose都能在volumes: 看到再写一次挂载(包括我们自己新建的或者已经存在的，我们也可以按照这种写法  注意是可写可不写)

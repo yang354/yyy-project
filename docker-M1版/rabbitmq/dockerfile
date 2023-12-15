@@ -1,0 +1,37 @@
+# 基础镜像
+FROM rabbitmq:3.10.6-management
+# author
+MAINTAINER yyy
+
+
+
+# 添加插件到指定目录 可按照此方式自行扩展其他插件
+COPY ./plugins/rabbitmq_delayed_message_exchange-3.10.2.ez /plugins
+# 开启插件
+RUN rabbitmq-plugins enable rabbitmq_delayed_message_exchange
+
+ENTRYPOINT ["rabbitmq-server"]
+#上面测试未生效
+
+############################################上面不生效的话就手动按下面步骤操作添加#####################################################3
+#cd rabbitmq目录下
+
+#拷贝到rabbitmq容器 yyy-rabbitmq 中
+
+#docker cp ./plugins/rabbitmq_delayed_message_exchange-3.10.2.ez yyy-rabbitmq:/plugins
+
+#进入容器
+
+#docker exec -it yyy-rabbitmq bash
+
+#启用插件
+
+#rabbitmq-plugins enable rabbitmq_delayed_message_exchange
+
+#查看
+
+#rabbitmq-plugins list
+
+#重新启动容器
+
+#docker restart yyy-rabbitmq

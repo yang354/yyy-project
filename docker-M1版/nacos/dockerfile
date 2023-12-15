@@ -1,0 +1,9 @@
+# 基础镜像
+FROM nacos/nacos-server:v2.1.2-slim
+# author
+MAINTAINER yyy
+
+# 复制conf文件到路径  左边是自己现有的目录    右边是镜像里面拥有的目录
+COPY ./conf/application.properties /home/nacos/conf/application.properties
+
+#这里copy过去的  在docker-compose都能在volumes: 看到再写一次挂载(包括我们自己新建的或者已经存在的，我们也可以按照这种写法  注意是可写可不写)

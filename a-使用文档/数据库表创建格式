@@ -1,0 +1,145 @@
+单表结构
+drop table if exists sys_student;
+create table sys_student (
+  student_id           int(11)         auto_increment    comment '编号',
+  student_name         varchar(30)     default ''        comment '学生名称',
+  student_age          int(3)          default null      comment '年龄',
+  student_hobby        varchar(30)     default ''        comment '爱好（0代码 1音乐 2电影）',
+  student_sex          char(1)         default '0'       comment '性别（0男 1女 2未知）',
+  student_status       char(1)         default '0'       comment '状态（0正常 1停用）',
+  student_birthday     datetime                          comment '生日',
+  primary key (student_id)
+) engine=innodb auto_increment=1 comment = '学生信息表';
+
+
+
+树表结构
+drop table if exists sys_product;
+create table sys_product (
+  product_id        bigint(20)      not null auto_increment    comment '产品id',
+  parent_id         bigint(20)      default 0                  comment '父产品id',
+  product_name      varchar(30)     default ''                 comment '产品名称',
+  order_num         int(4)          default 0                  comment '显示顺序',
+  status            char(1)         default '0'                comment '产品状态（0正常 1停用）',
+  primary key (product_id)
+) engine=innodb auto_increment=1 comment = '产品表';
+
+
+
+主子表结构
+-- ----------------------------
+-- 客户表
+-- ----------------------------
+drop table if exists sys_customer;
+create table sys_customer (
+  customer_id           bigint(20)      not null auto_increment    comment '客户id',
+  customer_name         varchar(30)     default ''                 comment '客户姓名',
+  phonenumber           varchar(11)     default ''                 comment '手机号码',
+  sex                   varchar(20)     default null               comment '客户性别',
+  birthday              datetime                                   comment '客户生日',
+  remark                varchar(500)    default null               comment '客户描述',
+  primary key (customer_id)
+) engine=innodb auto_increment=1 comment = '客户表';
+
+
+-- ----------------------------
+-- 商品表
+-- ----------------------------
+drop table if exists sys_goods;
+create table sys_goods (
+  goods_id           bigint(20)      not null auto_increment    comment '商品id',
+  customer_id        bigint(20)      not null                   comment '客户id',
+  name               varchar(30)     default ''                 comment '商品名称',
+  weight             int(5)          default null               comment '商品重量',
+  price              decimal(6,2)    default null               comment '商品价格',
+  date               datetime                                   comment '商品时间',
+  type               char(1)         default null               comment '商品种类',
+  primary key (goods_id)
+) engine=innodb auto_increment=1 comment = '商品表';
+
+
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+购买商品需要用的表
+
+订单表
+CREATE TABLE `sft_study_school_order` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '订单id',
+  `order_tenant_id` bigint(20) DEFAULT NULL COMMENT '订单租户id',
+  `member_id` bigint(20) NOT NULL COMMENT '用户id',
+  `member_username` varchar(64) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '用户帐号',
+  `order_num` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '订单编号',
+  `total_amount` decimal(10,2) DEFAULT NULL COMMENT '订单总金额',
+  `pay_amount` decimal(10,2) DEFAULT NULL COMMENT '应付金额（实际支付金额）',
+  `course_amount` decimal(10,2) DEFAULT '0.00' COMMENT '课程金额',
+  `pay_type` int(1) DEFAULT NULL COMMENT '支付方式：0->未支付；1->支付宝；2->微信;',
+  `order_type` int(1) DEFAULT NULL COMMENT '0-校本研学；1-机构研学；2-亲子活动；3-夏令营',
+  `source_type` int(1) DEFAULT NULL COMMENT '订单来源：0->小程序端',
+  `status` int(1) DEFAULT '0' COMMENT '订单状态：0->待支付；1->支付成功;2-支付失败;3-支付中;4-超时未支付;5-已退款',
+  `offline_pay_status` int(1) DEFAULT '0' COMMENT '线下支付状态：0-待支付；1-已支付；',
+  `is_feed_back` int(1) DEFAULT '0' COMMENT '是否反馈：0-未反馈；1-已反馈',
+  `note` varchar(500) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '订单备注',
+  `is_deleted` int(2) NOT NULL DEFAULT '0' COMMENT '删除状态：0->未删除；1->已删除',
+  `out_time` datetime DEFAULT NULL COMMENT '订单过期时间',
+  `create_time` datetime DEFAULT NULL COMMENT '提交时间',
+  `payment_time` datetime DEFAULT NULL COMMENT '支付时间',
+  `creator` varchar(64) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '创建人',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `updator` varchar(64) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '编辑人',
+  PRIMARY KEY (`id`),
+  KEY `idx_order_num` (`order_num`) USING BTREE,
+  KEY `idx_member_id` (`member_id`) USING BTREE,
+  KEY `idx_order_tenant_id` (`order_tenant_id`,`status`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=596 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='研学期次课程订单表';
+订单商品信息表
+CREATE TABLE `sft_study_school_order_item` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '订单id',
+  `order_id` bigint(20) NOT NULL COMMENT '用户id',
+  `tenant_id` bigint(20) DEFAULT NULL COMMENT '培训机构企业Id',
+  `support_id` bigint(20) DEFAULT NULL COMMENT '期次id',
+  `support_course_id` bigint(20) DEFAULT NULL COMMENT '课程Id',
+  `course_name` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '课程名称',
+  `course_id` bigint(20) DEFAULT NULL,
+  `student_id` bigint(20) DEFAULT NULL COMMENT '学生id',
+  `student_name` varchar(64) COLLATE utf8mb4_bin DEFAULT NULL,
+  `avatar_url` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '头像',
+  `create_time` datetime DEFAULT NULL COMMENT '提交时间',
+  `creator` varchar(64) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '创建人',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `updator` varchar(64) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '编辑人',
+  PRIMARY KEY (`id`),
+  KEY `idx_order_id` (`order_id`) USING BTREE,
+  KEY `idx_support_course_id` (`support_course_id`) USING BTREE,
+  KEY `isx_student_id` (`student_id`) USING BTREE,
+  KEY `idx_course_id` (`course_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=422 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='研学期次课程订单项表';
+退款表
+CREATE TABLE `sft_study_school_order_refund` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '订单id',
+  `order_num` varchar(32) COLLATE utf8mb4_bin NOT NULL COMMENT '用户id',
+  `student_id` bigint(20) DEFAULT NULL COMMENT '学生id',
+  `real_refund_amount` decimal(10,2) DEFAULT '0.00' COMMENT '实际退款金额',
+  `refund_amount` decimal(10,2) DEFAULT NULL COMMENT '退款金额',
+  `refund_num` varchar(64) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '退款编号',
+  `reason` varchar(64) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '原因',
+  `status` int(2) DEFAULT '0' COMMENT '状态：0-退款中；1-退款成功；2-退款失败,3-取消',
+  `refund_stage` int(1) DEFAULT NULL COMMENT '退款时课程状态：0-取消报名，1-成团退款',
+  `progress_status` int(1) DEFAULT NULL COMMENT '退款申请状态，0-提交申请，1- 商家审核，2-退款结束',
+  `refund_time` datetime DEFAULT NULL COMMENT '退款时间',
+  `approval_status` int(1) DEFAULT NULL COMMENT '审核状态，0-未处理，1-通过，2-驳回',
+  `approver_member_id` bigint(20) DEFAULT NULL COMMENT '审批人id',
+  `approver_member_name` varchar(32) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '审批人姓名',
+  `approver_mechanism` varchar(64) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '审批人单位名称',
+  `approval_time` datetime DEFAULT NULL COMMENT '审批时间',
+  `reject_reason` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '拒绝原因',
+  `cancel_time` datetime DEFAULT NULL COMMENT '取消时间',
+  `create_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `creator` varchar(64) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '创建人',
+  `update_time` datetime DEFAULT NULL COMMENT '修改时间',
+  `updator` varchar(64) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '编辑人',
+  PRIMARY KEY (`id`),
+  KEY `idx_order_num` (`order_num`) USING BTREE,
+  KEY `idx_refund_num` (`refund_num`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=129 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='研学期次课程订单退款表';
