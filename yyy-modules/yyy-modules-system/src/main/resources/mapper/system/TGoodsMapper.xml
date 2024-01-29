@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yyy.system.mapper.TGoodsMapper">
+
+    <resultMap type="TGoods" id="TGoodsResult">
+        <result property="id"    column="id"    />
+        <result property="goodsName"    column="goods_name"    />
+        <result property="goodsTitle"    column="goods_title"    />
+        <result property="goodsImg"    column="goods_img"    />
+        <result property="goodsDetail"    column="goods_detail"    />
+        <result property="goodsPrice"    column="goods_price"    />
+        <result property="goodsStock"    column="goods_stock"    />
+    </resultMap>
+
+    <sql id="selectTGoodsVo">
+        select id, goods_name, goods_title, goods_img, goods_detail, goods_price, goods_stock from t_goods
+    </sql>
+
+    <select id="selectTGoodsList" parameterType="TGoods" resultMap="TGoodsResult">
+        <include refid="selectTGoodsVo"/>
+        <where>
+            <if test="goodsName != null  and goodsName != ''"> and goods_name like concat('%', #{goodsName}, '%')</if>
+            <if test="goodsTitle != null  and goodsTitle != ''"> and goods_title = #{goodsTitle}</if>
+            <if test="goodsImg != null  and goodsImg != ''"> and goods_img = #{goodsImg}</if>
+            <if test="goodsDetail != null  and goodsDetail != ''"> and goods_detail = #{goodsDetail}</if>
+            <if test="goodsPrice != null "> and goods_price = #{goodsPrice}</if>
+            <if test="goodsStock != null "> and goods_stock = #{goodsStock}</if>
+        </where>
+    </select>
+
+    <select id="selectTGoodsById" parameterType="Long" resultMap="TGoodsResult">
+        <include refid="selectTGoodsVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertTGoods" parameterType="TGoods" useGeneratedKeys="true" keyProperty="id">
+        insert into t_goods
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="goodsName != null">goods_name,</if>
+            <if test="goodsTitle != null">goods_title,</if>
+            <if test="goodsImg != null">goods_img,</if>
+            <if test="goodsDetail != null">goods_detail,</if>
+            <if test="goodsPrice != null">goods_price,</if>
+            <if test="goodsStock != null">goods_stock,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="goodsName != null">#{goodsName},</if>
+            <if test="goodsTitle != null">#{goodsTitle},</if>
+            <if test="goodsImg != null">#{goodsImg},</if>
+            <if test="goodsDetail != null">#{goodsDetail},</if>
+            <if test="goodsPrice != null">#{goodsPrice},</if>
+            <if test="goodsStock != null">#{goodsStock},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTGoods" parameterType="TGoods">
+        update t_goods
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="goodsName != null">goods_name = #{goodsName},</if>
+            <if test="goodsTitle != null">goods_title = #{goodsTitle},</if>
+            <if test="goodsImg != null">goods_img = #{goodsImg},</if>
+            <if test="goodsDetail != null">goods_detail = #{goodsDetail},</if>
+            <if test="goodsPrice != null">goods_price = #{goodsPrice},</if>
+            <if test="goodsStock != null">goods_stock = #{goodsStock},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTGoodsById" parameterType="Long">
+        delete from t_goods where id = #{id}
+    </delete>
+
+    <delete id="deleteTGoodsByIds" parameterType="String">
+        delete from t_goods where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
