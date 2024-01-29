@@ -1,9 +1,14 @@
 package com.yyy.test.controller.factoryAndStrategy;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 /**
  * 用策略模式和工厂模式以及模板方法模式优化代码中的if else
+ *
+ * 如何扩展
+ * 增加一个xxxHandler 继承 AbstractHandler
  */
-public class Demo {
+public class Demo1 {
 
     public static void main(String[] args) {
        //调用  这里只测试了使用抽象类的方式，接口的方式同理调用即可

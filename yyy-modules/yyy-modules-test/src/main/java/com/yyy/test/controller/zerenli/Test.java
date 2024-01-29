@@ -9,6 +9,10 @@ package com.yyy.test.controller.zerenli;
  * 一共写了5个验证，等验证通过以后才执行下面的逻辑，
  * 过了一阵产品提了需求，跟这个方法类似，
  * 我又把这个方法copy了一份，只不过验证条件稍微有点不一样，变成6个验证了。
+ *
+ *
+ * 如何扩展
+ * 增加一个xxxHandler 继承 Handler
  */
 public class Test {
 

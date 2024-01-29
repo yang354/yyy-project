@@ -1,9 +1,6 @@
 package com.yyy.test.controller.strategy;
 
 import cn.hutool.core.lang.Assert;
-import com.yyy.test.controller.factoryAndStrategy.NiuWaHandler;
-import com.yyy.test.controller.factoryAndStrategy.PiQiuHandler;
-import com.yyy.test.controller.factoryAndStrategy.WoNiuHandler;
 import com.yyy.test.controller.strategy.service.AgeTransferService;
 import com.yyy.test.controller.strategy.service.InterestTransferService;
 import com.yyy.test.controller.strategy.service.UserTransferService;
@@ -14,7 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @Date 2023/12/14 下午7:43
  */
 
-public class Demo {
+/**
+策略模式
+如何扩展
+  CodeEnum增加枚举，service包增加一个xxxService 即可
+ */
+public class Demo2 {
 
 
     @Autowired
@@ -59,10 +61,5 @@ public class Demo {
         //调用  这里只测试了使用抽象类的方式，接口的方式同理调用即可
 
 
-
     }
-
-
-
-
 }

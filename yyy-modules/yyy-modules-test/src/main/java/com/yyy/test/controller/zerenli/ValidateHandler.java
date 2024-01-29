@@ -1,8 +1,10 @@
 package com.yyy.test.controller.zerenli;
 
 
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+@Component
 public class ValidateHandler extends Handler {
     @Override
     public void doHandler(User user) {
