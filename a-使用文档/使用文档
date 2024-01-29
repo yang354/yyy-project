@@ -170,6 +170,9 @@ https://blog.csdn.net/zht3306/article/details/124687425?ops_request_misc=%257B%2
 拷贝system服务，然后改名字
 注意：iml文件，他是关乎到启动类的，所以除了改名字，还要到 Edit Configuration 里面改一下路径，不然它还是指向原来system模块的启动路径
 
+然后还要修改bootstrap.yml文件 网关的yaml文件添加映射
+
+
 或者手动创建
 Name: 用yyy-xxx
 ArtifactId: 用yzz-xxx
@@ -393,8 +396,15 @@ for(int i=0;i<1000;i++){
 
 
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+为什么访问除了get接口正常，访问其他的都报403错误
 
+原因是 在设置跨域的时候只放行了get方法
+// 设置允许的方法
+// .allowedMethods("GET");
 
+解决办法：增加放行的请求类型
+.allowedMethods("GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS");
 
 
 

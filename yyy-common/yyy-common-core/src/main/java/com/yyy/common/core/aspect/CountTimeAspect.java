@@ -30,6 +30,7 @@ public class CountTimeAspect {
         //停止计时，然后计算时长.单位为毫秒.
         long elapsed = stopwatch.stop().elapsed(TimeUnit.MILLISECONDS);
         log.info("方法 [{}] 花费时间：{}ms",methodName,(elapsed));
+//        log.info("方法{}耗时：{}毫秒",pjp.getSignature().getName(),elapsed);
         return obj;
     }
 }

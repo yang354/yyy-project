@@ -15,3 +15,126 @@ hashmap底层是数组+链表+红黑树，线程不安全，k/v可以为null，�
 当数组长度大于64，链表长度大于8，会转变为红黑树
 为什么变成红黑树
 红黑树有很好的自平衡，通过左旋右旋变色来保存平衡，在通过二分查找可以提高效率
+
+
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795139, 1735595566047223809, 1724995094718545922);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795140, 1735595568366673922, 1724995094718545922);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795141, 1735595569050345473, 1724995094718545922);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795142, 1735595570904227841, 1724995094718545922);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795143, 1735595571260743682, 1724995094718545922);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795144, 1735595572493869058, 1724995094718545922);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795145, 1735595572833607681, 1724995094718545922);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795146, 1735595573253038081, 1724995094718545922);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795147, 1735595573567610882, 1724995094718545922);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795148, 1735595573894766593, 1724995094718545922);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795149, 1735595574129647617, 1724995094718545922);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795150, 1735595574377111553, 1724995094718545922);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795151, 1735595574628769793, 1724995094718545922);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795152, 1735595574888816642, 1724995094718545922);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795153, 1735596959566979073, 1724995536655581185);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795154, 1735596960229679106, 1724995536655581185);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795155, 1735596961014013954, 1724995536655581185);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795156, 1735596961295032321, 1724995536655581185);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795157, 1735596963807420418, 1724995536655581185);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795158, 1735596964117798914, 1724995536655581185);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795159, 1735596964876967937, 1724995536655581185);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795160, 1735596965359312898, 1724995536655581185);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795161, 1735596966206562306, 1724995536655581185);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795162, 1735596966491774978, 1724995536655581185);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795163, 1735596966831513602, 1724995536655581185);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795164, 1735596967196418049, 1724995536655581185);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795165, 1735596967561322497, 1724995536655581185);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795166, 1735598132055302145, 1724996171211833345);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795167, 1735598132436983810, 1724996171211833345);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795168, 1735598132730585090, 1724996171211833345);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795169, 1735598133003214850, 1724996171211833345);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795170, 1735598133301010433, 1724996171211833345);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795171, 1735598133577834497, 1724996171211833345);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795172, 1735598133837881345, 1724996171211833345);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795173, 1735598134106316802, 1724996171211833345);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795174, 1735598134357975042, 1724996171211833345);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795175, 1735598134630604802, 1724996171211833345);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795176, 1735598134911623169, 1724996171211833345);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795177, 1735598135175864321, 1724996171211833345);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795178, 1735598135461076993, 1724996171211833345);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795179, 1735598135784038402, 1724996171211833345);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795180, 1735598136257994753, 1724996171211833345);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795181, 1735598136564178946, 1724996171211833345);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795182, 1735598136933277697, 1724996171211833345);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795183, 1735598137210101761, 1724996171211833345);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795184, 1735598137482731521, 1724996171211833345);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795185, 1735598137767944194, 1724996171211833345);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795186, 1735598138048962562, 1724996171211833345);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795187, 1735598138325786625, 1724996171211833345);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795188, 1735598138631970818, 1724996171211833345);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795189, 1735598138950737921, 1724996171211833345);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795190, 1735598139252727809, 1724996171211833345);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795191, 1735598139567300609, 1724996171211833345);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795192, 1735598139860901890, 1724996171211833345);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795193, 1735598140162891777, 1724996171211833345);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795194, 1735599128139587585, 1724995397593432065);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795195, 1735599128454160385, 1724995397593432065);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795196, 1735599128735178754, 1724995397593432065);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795197, 1735599128999419906, 1724995397593432065);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795198, 1735599129255272449, 1724995397593432065);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795199, 1735599129544679425, 1724995397593432065);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795200, 1735599129892806658, 1724995397593432065);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795201, 1735599130169630722, 1724995397593432065);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795202, 1735599130412900353, 1724995397593432065);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795203, 1735599130685530114, 1724995397593432065);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795204, 1735599131520196609, 1724995397593432065);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795205, 1735599131960598529, 1724995397593432065);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795206, 1735599967436595201, 1724995243729584129);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795207, 1735599968057352193, 1724995243729584129);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795208, 1735599968820715521, 1724995243729584129);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795209, 1735599969089150977, 1724995243729584129);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795210, 1735599969827348482, 1724995243729584129);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795211, 1735599970125144066, 1724995243729584129);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795212, 1735599970712346626, 1724995243729584129);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795213, 1735599970980782081, 1724995243729584129);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795214, 1735599971232440321, 1724995243729584129);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795215, 1735599971484098562, 1724995243729584129);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795216, 1735599971748339713, 1724995243729584129);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795217, 1735599972041940993, 1724995243729584129);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795218, 1735599972557840386, 1724995243729584129);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795219, 1735599972796915713, 1724995243729584129);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795220, 1735599973077934082, 1724995243729584129);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795221, 1735599973438644225, 1724995243729584129);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795222, 1735599973719662593, 1724995243729584129);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795223, 1735599973983903745, 1724995243729584129);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795224, 1735599974269116418, 1724995243729584129);
+
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795225, 1734024028533460994, 1724995397593432065);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795226, 1734024028269219842, 1724995397593432065);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795227, 1734024027933675521, 1724995397593432065);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795228, 1734024027199672322, 1724995397593432065);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795229, 1734024026960596993, 1724995397593432065);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795230, 1734024026755076097, 1724995397593432065);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795231, 1734024026411143170, 1724995397593432065);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795232, 1734024026146902017, 1724995397593432065);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795233, 1734024025882660866, 1724995397593432065);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795234, 1734024025551310849, 1724995397593432065);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795235, 1734024025148657666, 1724995397593432065);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795236, 1734024024259465218, 1724995397593432065);
+INSERT INTO `floodwms`.`blade_user_dept` (`id`, `user_id`, `dept_id`) VALUES (1742485367224795237, 1734024023995224065, 1724995397593432065);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
