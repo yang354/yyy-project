@@ -11,6 +11,7 @@ import com.yyy.common.core.annotation.CountTime;
 import com.yyy.common.core.domain.R;
 import com.yyy.system.domain.SysMenu;
 import com.yyy.system.mapper.SysMenuMapper;
+import com.yyy.system.utils.TreeUtil;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
@@ -44,12 +45,25 @@ public class SysMenuController extends BaseController
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @CountTime
+    @GetMapping("/testTreeUtil")
+    public R testTreeUtil(){
+        List<SysMenu> menuAll = sysMenuMapper.selectList(null); // 所有部门集合
+
+        //使用工具类:
+        List<SysMenu> result = TreeUtil.treeOut(menuAll, SysMenu::getMenuId, SysMenu::getParentId, SysMenu::getChildren);
+
+        return R.ok(result,"根据子节点获取根节点");
+    }
+
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    @CountTime
     @GetMapping("/treeFindPath")
     public R treeFindPath(){
         List<SysMenu> menuAll = menuService.getAllTree(0l);
         ArrayList<Long> arrayList = new ArrayList<>();
         List<Long>  menuRoot = treeFindPath(menuAll, 1060l,arrayList);
-        return R.ok(menuRoot,"根据子节点获取根节点");
+        return R.ok(menuRoot,"根据子节点获取根节点");  //例如 1060l的上级节点依次是 3->115->1060(从大到小，包括自己)
     }
 
     private List<Long> treeFindPath (List<SysMenu> tree, Long menuId, List<Long> path) {
@@ -76,6 +90,28 @@ public class SysMenuController extends BaseController
     }
 
 
+    @CountTime
+    @GetMapping("/treeOrgParent1")
+    @ApiOperation(value="向上查询自己的上级", notes="递归遍历获取指定菜单的父节点")
+    public R treeOrgParent1(){
+        List<SysMenu> menuAll = sysMenuMapper.selectList(null); // 所有部门集合
+
+        SysMenu menuRoot = treeOrgParent1(100l, menuAll);
+        return R.ok(menuRoot,"根据子节点获取自己父级节点");
+    }
+
+    public SysMenu treeOrgParent1(Long parentId, List<SysMenu> trees) {
+        for (SysMenu sysMenu:trees){
+            if (sysMenu.getMenuId() == parentId){
+                return sysMenu;
+            }
+            if (!CollectionUtils.isEmpty(sysMenu.getChildren())) {
+                treeOrgParent1(parentId,sysMenu.getChildren());
+            }
+        }
+        return null;
+    }
+
 
 
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -86,7 +122,7 @@ public class SysMenuController extends BaseController
         List<SysMenu> menuAll = sysMenuMapper.selectList(null); // 所有部门集合
 
         List<Long>  menuRoot = treeOrgParent(1006l, menuAll);
-        return R.ok(menuRoot,"根据子节点获取根节点");
+        return R.ok(menuRoot,"根据子节点获取根节点"); //例如 1006l的上级节点依次是 1006->100->1(从小到大，包括自己)
     }
     /**
      * 递归遍历获取指定菜单的所有父节点
@@ -101,7 +137,7 @@ public class SysMenuController extends BaseController
         //添加自己
         parentIds.add(treeId);
 
-        //模拟修改值-只修改子节点的根节点
+        //模拟修改值-先修改自己
 //        SysMenu sysMenu = new SysMenu();
 //        sysMenu.setUpdateTime(new Date());
 //        UpdateWrapper<SysMenu> menuUpdateWrapper = new UpdateWrapper<>();
@@ -127,7 +163,7 @@ public class SysMenuController extends BaseController
             if (treeId.equals(tree.getMenuId())) {
                 parentIds.add(tree.getParentId());
 
-                //模拟修改值-只修改子节点的根节点
+                //模拟修改值-再修改子节点的所有上级节点
 //                SysMenu sysMenu = new SysMenu();
 //                sysMenu.setUpdateTime(new Date());
 //                UpdateWrapper<SysMenu> menuUpdateWrapper = new UpdateWrapper<>();
@@ -140,7 +176,7 @@ public class SysMenuController extends BaseController
     }
 
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//~~~~~~~~~~~~~~~~~~~~~~~~和上面功能一样，都是向上查询所有上级  实现方式不同~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     @CountTime
     @GetMapping("/getMenuUpList")
     @ApiOperation(value="向上查询所有上级", notes="递归至上层节点为 null 返回入参的子节点数据为根节点")
@@ -148,13 +184,20 @@ public class SysMenuController extends BaseController
         List<SysMenu> menuAll = sysMenuMapper.selectList(null); // 所有部门集合
         SysMenu leafNodeMenu = new SysMenu();
         //注意必须是存在的，
-        leafNodeMenu.setMenuId(1018l);
-        leafNodeMenu.setParentId(103l);
+        leafNodeMenu.setMenuId(1006l);
+        leafNodeMenu.setParentId(100l);
 
         ArrayList<SysMenu> list = new ArrayList<>();
         //先查询menuId 是否存在数据库中
-        //模拟修改值  先修改自己
         list.add(leafNodeMenu);
+
+        //模拟修改值  先修改自己
+//        SysMenu sysMenu = new SysMenu();
+//        sysMenu.setUpdateTime(new Date());
+//        UpdateWrapper<SysMenu> menuUpdateWrapper = new UpdateWrapper<>();
+//        menuUpdateWrapper.eq("menu_id", leafNodeMenu.getMenuId());
+//        sysMenuMapper.update(sysMenu, menuUpdateWrapper);
+
         List<SysMenu> menuUpTree = getMenuUpList(menuAll, leafNodeMenu,list);
         return R.ok(menuUpTree,"根据子节点查出的所有上级");
     }
@@ -166,8 +209,6 @@ public class SysMenuController extends BaseController
      */
     public  List<SysMenu> getMenuUpList(List<SysMenu> menuAll, SysMenu leafNodeMenu,ArrayList<SysMenu> list){
         if(ObjectUtil.isNotEmpty(leafNodeMenu)){
-//            List<SysMenu> list = new ArrayList<>();
-
 
             Long parentId = leafNodeMenu.getParentId();
             List<SysMenu> parentMenus = menuAll.stream().filter(item -> item.getMenuId().equals(parentId)).collect(Collectors.toList());
@@ -184,9 +225,6 @@ public class SysMenuController extends BaseController
 
                 list.add(parentMenu);
                 List<SysMenu> menuUpTree = getMenuUpList(menuAll, parentMenu,list);
-//                if(menuUpTree!=null){
-//                    list.add(menuUpTree);
-//                }
                 return list;
             }
         }
