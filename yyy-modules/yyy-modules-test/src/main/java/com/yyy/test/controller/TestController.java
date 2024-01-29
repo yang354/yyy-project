@@ -9,6 +9,7 @@ import com.yyy.common.core.domain.R;
 
 import com.yyy.common.core.enums.OaTypeEnum;
 import com.yyy.common.core.utils.SpringUtils;
+import com.yyy.common.core.utils.uuid.UUID;
 import com.yyy.common.sms.service.SmsService;
 
 
@@ -17,6 +18,8 @@ import com.yyy.test.service.AccountInfoService;
 import com.yyy.test.thread.AsyncFactory;
 import com.yyy.test.thread.AsyncManager;
 import com.yyy.test.vo.CityEntityVO;
+import com.yyy.test.vo.TestUserMemo;
+import com.yyy.test.vo.TestUserVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +30,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -131,8 +135,7 @@ public class TestController {
     }
 
 
-
-
+    //可要可不要 要的话可以看到subCityList是空的，数据更加清晰可见   如果不要的话subCityList不是空的，会有数据，但也不影响操作
     private CityEntityVO beanCopy(CityEntityVO source) {
         CityEntityVO res = new CityEntityVO();
         res.setId(source.getId());
@@ -331,5 +334,127 @@ public class TestController {
         System.out.println("结束");
         return R.ok();
     }
+
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    @ApiOperation("测试拿到两个list数据如何比较取值-常规思路") //不可取
+    @GetMapping("/testTowList1")
+    private R testTowList1()  {
+        //获取两个list
+        List<TestUserVO> userTestList = getUserTestList();
+        List<TestUserMemo> userMemoTestList = getUserMemoTestList();
+
+        ArrayList<String> list = new ArrayList<>();
+        for (TestUserVO user : userTestList) {
+            Long userId = user.getUserId();
+            for (TestUserMemo userMemo : userMemoTestList) {
+                if (userId.equals(userMemo.getUserId())) {
+                    String content = userMemo.getContent();
+                    list.add(content);
+//                    System.out.println("模拟数据content 业务处理......"+content);
+                }
+            }
+        }
+        return R.ok(list);
+    }
+
+
+    @ApiOperation("测试拿到两个list数据如何比较取值-优化后")
+    @GetMapping("/testTowList2")
+    private R testTowList2()  {
+        //获取两个list  测试数量大的情况
+//        List<TestUserVO> userTestList = getUserTestList();
+//        List<TestUserMemo> userMemoTestList = getUserMemoTestList();
+
+        //第一个list
+        List<TestUserVO> userTestList = new ArrayList<>();
+        userTestList.add(new TestUserVO(1l,"张三"));
+        userTestList.add(new TestUserVO(2l,"李四"));
+
+        //第二个list
+        List<TestUserMemo> userMemoTestList = new ArrayList<>();
+        //测试正常数据
+        TestUserMemo testUserMemo2 = new TestUserMemo();
+        testUserMemo2.setContent("aaaa");
+        testUserMemo2.setUserId(1l);
+        userMemoTestList.add(testUserMemo2);
+
+        //测试value为空数据
+        TestUserMemo testUserMemo3 = new TestUserMemo();
+        testUserMemo3.setUserId(2l);
+        userMemoTestList.add(testUserMemo3);
+
+        //测试重复key数据
+        TestUserMemo testUserMemo4 = new TestUserMemo();
+        testUserMemo4.setContent("bbb");
+        testUserMemo4.setUserId(1l);
+        userMemoTestList.add(testUserMemo4);
+
+        ArrayList<String> list = new ArrayList<>();
+        //注意Collectors.toMap 如果有key重复的 会报错或者value为空的也会报错 -这里做了value为空的判断和key重复的判断 具体解决办法原理往下看
+        Map<Long, String> contentMap = userMemoTestList.stream()
+                .filter(m -> m.getContent() != null)
+                .collect(Collectors.toMap(TestUserMemo::getUserId, TestUserMemo::getContent,(k1, k2) -> k2));
+
+        System.out.println(JSON.toJSONString(contentMap));
+        for (TestUserVO user : userTestList) {
+            Long userId = user.getUserId();
+            String content = contentMap.get(userId);
+            if (StringUtils.hasLength(content)) {
+                list.add(content);
+//                System.out.println("模拟数据content 业务处理......" + content);
+            }
+        }
+        return R.ok(list);
+    }
+
+
+    public static List<TestUserVO> getUserTestList() {
+        List<TestUserVO> users = new ArrayList<>();
+        for (int i = 1; i <= 50000; i++) {
+            TestUserVO user = new TestUserVO();
+            user.setName(UUID.randomUUID().toString());
+            user.setUserId((long) i);
+            users.add(user);
+        }
+        return users;
+    }
+    public static List<TestUserMemo> getUserMemoTestList() {
+        List<TestUserMemo> userMemos = new ArrayList<>();
+        for (int i = 30000; i >= 1; i--) {
+            TestUserMemo userMemo = new TestUserMemo();
+            userMemo.setContent(UUID.randomUUID().toString());
+            userMemo.setUserId((long) i);
+            userMemos.add(userMemo);
+        }
+        return userMemos;
+    }
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    //从上面的 使用stream() 记得一定要判空 这里没列出来，大家自己注意 衍生出来的
+    //重复key问题  代码优化后为:(合并规则：重复key出现时，取后面的，前面的丢弃)
+    public static void main(String[] args) {
+        List<TestUserVO> list = new ArrayList<>();
+        list.add(new TestUserVO(123l, "积分权益"));
+        list.add(new TestUserVO(123l, "现金权益"));
+        Map<Long, String> map = list.stream()
+                .collect(Collectors.toMap(TestUserVO::getUserId, TestUserVO::getName,
+                        (k1, k2) -> k2));
+        System.out.println(JSON.toJSONString(map));
+    }
+
+    //Collectors.toMap的value值为null问题
+//    public static void main(String[] args) {
+//        List<TestUserVO> list = new ArrayList<>();
+//        list.add(new TestUserVO(123l, "积分权益"));
+//        TestUserVO testUserVO = new TestUserVO();
+//        testUserVO.setUserId(124l);
+//        list.add(testUserVO);
+//        Map<Long, String> map2 = list.stream().collect(HashMap::new,
+//                (m, v) -> m.put(v.getUserId(), v.getName()),
+//                HashMap::putAll);
+//        System.out.println(JSON.toJSONString(map2));
+//    }
 
 }
