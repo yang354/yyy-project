@@ -61,7 +61,7 @@ public class TestIOController {
      解决办法：
      PdfWriter writer = PdfWriter.getInstance(document, baos);
      outputStream = response.getOutputStream();
-     byte[] bytes = baos.toByteArray();//pdf字节数组
+     byte[] bytes = baos.toByteArray(); //返回base64文件流 需要根据对应的文件前缀拼接才会获取到 例如图片的是 'data:image/jpeg;base64,'+res.data
      outputStream.write(bytes);
      //如果想导出自己看导出内容是否正确，可以放到响应头，否则是传给前端byte[]即可
      response.addHeader("Content-Type", "application/pdf; charset=utf-8");
@@ -105,14 +105,14 @@ public class TestIOController {
             ExcelUtils.createRow(wb, 0, excelContent2, -4); //在模板文件追加内容->等于导出的数据 这样我们省去构建模版头内容的步骤
             wb.write(baos);  //读取到的excel内容写入字节输出流
 
-            bytes = baos.toByteArray();
+            bytes = baos.toByteArray();  //返回base64文件流 需要根据对应的文件前缀拼接才会获取到 例如图片的是 'data:image/jpeg;base64,'+res.data
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`
             //如果想导出自己看导出内容是否正确，可以放到响应头，否则是传给前端byte[]即可
-            response.setHeader("content-Type", "application/vnd.ms-excel");
-            // 下载文件的默认名称
-            response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode("导出任务数据.xlsx", "utf-8"));
-            outputStream = response.getOutputStream();
-            outputStream.write(bytes);
+//            response.setHeader("content-Type", "application/vnd.ms-excel");
+//            // 下载文件的默认名称
+//            response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode("导出任务数据.xlsx", "utf-8"));
+//            outputStream = response.getOutputStream();
+//            outputStream.write(bytes);
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`
             return R.ok(bytes, "导出成功");
         } catch (Exception e) {
@@ -155,7 +155,7 @@ public class TestIOController {
 
             wb.write(baos);  //读取到的excel内容写入字节输出流
 
-            bytes = baos.toByteArray();
+            bytes = baos.toByteArray(); //返回base64文件流 需要根据对应的文件前缀拼接才会获取到 例如图片的是 'data:image/jpeg;base64,'+res.data
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`
             //如果想导出自己看导出内容是否正确，可以放到响应头，否则是传给前端byte[]即可
             response.setHeader("content-Type", "application/vnd.ms-excel");
@@ -247,7 +247,7 @@ public class TestIOController {
             ExcelUtils.setCellDropdownList(wb, 0, cellDropdownList);  //设置下拉框
             wb.write(baos);  //读取到的excel内容写入字节输出流
 
-            bytes = baos.toByteArray();
+            bytes = baos.toByteArray(); //返回base64文件流 需要根据对应的文件前缀拼接才会获取到 例如图片的是 'data:image/jpeg;base64,'+res.data
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`
             //如果想导出自己看导出内容是否正确，可以放到响应头，否则是传给前端byte[]即可
             response.setHeader("content-Type", "application/vnd.ms-excel");
@@ -305,7 +305,7 @@ public class TestIOController {
             ExcelUtils.setMergedRegion(wb, 0, setMerges);  //设置合并单元格
             wb.write(baos);  //读取到的excel内容写入字节输出流
 
-            bytes = baos.toByteArray();
+            bytes = baos.toByteArray(); //返回base64文件流 需要根据对应的文件前缀拼接才会获取到 例如图片的是 'data:image/jpeg;base64,'+res.data
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`
             //如果想导出自己看导出内容是否正确，可以放到响应头，否则是传给前端byte[]即可
             response.setHeader("content-Type", "application/vnd.ms-excel");
@@ -470,7 +470,7 @@ public class TestIOController {
             while ((len = fis.read(buffer)) != -1) {
                 baos.write(buffer, 0, len);
             }
-            data = baos.toByteArray();
+            data = baos.toByteArray(); //返回base64文件流 需要根据对应的文件前缀拼接才会获取到 例如图片的是 'data:image/jpeg;base64,'+res.data
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -641,7 +641,7 @@ public class TestIOController {
                 org.apache.poi.util.IOUtils.closeQuietly(baos);
                 org.apache.poi.util.IOUtils.closeQuietly(wb);
             }
-            byte[] bytes = baos.toByteArray();
+            byte[] bytes = baos.toByteArray(); //返回base64文件流 需要根据对应的文件前缀拼接才会获取到 例如图片的是 'data:image/jpeg;base64,'+res.data
 
             analysisExcelResultDTO.setContent(bytes);
 
