@@ -41,6 +41,17 @@ services:
       - "9849:9849"
     depends_on:  #表示app服务依赖于 yyy-redis...服务,则在启动 DockerCompose时，Compose会先启动yyy-redis...服务，等待它启动并处于运行状态后，才会启动app服务
       - yyy-mysql
+  yyy-sentinel:
+    container_name: yyy-sentinel
+    image: bladex/sentinel-dashboard:1.8.1
+    build:  #启动服务时，先将build中指定的dockerfile打包成镜像，再运行该镜像
+      context: ./sentinel #指定上下文目录dockerfile所在目录[相对、绝对路径都可以]
+    ports:
+      - "8081:8858"
+    environment:
+      - AUTH_USERNAME=sentinel
+      - AUTH_PASSWORD=sentinel
+    platform: linux/amd64
   yyy-mysql:
     container_name: yyy-mysql
     image: mysql:8.0

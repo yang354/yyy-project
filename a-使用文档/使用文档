@@ -45,7 +45,7 @@ http://127.0.0.1:8080/swagger-ui/index.html
 注意调用登录接口时，启动auth模块是不够的，auth模块远程调用了system模块，所以还要启动system模块
 
 登录用户名 admin
-登录密码 admin123
+登录密码 111111
 
 如果不知道密码，可以全局搜索看  encryptPassword  这个方法，重新生成密码
 

@@ -1,7 +1,15 @@
 package com.yyy.common.redis.configure;
 
+import cn.hutool.core.collection.CollUtil;
+import org.redisson.Redisson;
+import org.redisson.api.RedissonClient;
+import org.redisson.config.ClusterServersConfig;
+import org.redisson.config.Config;
+import org.redisson.config.SingleServerConfig;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
+import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
@@ -10,6 +18,8 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+
+import javax.annotation.Resource;
 
 /**
  * redis配置
@@ -71,4 +81,30 @@ public class RedisConfig extends CachingConfigurerSupport
                 "end\n" +
                 "return tonumber(current);";
     }
+
+    //##################################################33
+
+//
+//    private final String REDIS_PREFIX = "redis://yyy-redis:6379";
+//
+//    @Bean(destroyMethod = "shutdown")
+//    @ConditionalOnMissingBean(RedissonClient.class)
+//    public RedissonClient redissonClient() {
+//        // 单机/集群
+//        Config config = new Config();
+//
+//        initSingleConfig(config.useSingleServer());
+//
+//        return Redisson.create(config);
+//    }
+//
+//
+//    /**
+//     * 单节点模式
+//     */
+//    private void initSingleConfig(SingleServerConfig singleServerConfig){
+//        singleServerConfig.setAddress(REDIS_PREFIX);
+//    }
+
+
 }

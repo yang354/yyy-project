@@ -1,26 +1,25 @@
 # Tomcat
 server:
-  port: 9203
+  port: 9205
 
 # Spring
 spring:
   application:
     # 应用名称
-    name: yyy-job
-  profiles:
-    # 环境配置
-    active: prod
+    name: yyy-test
   cloud:
     nacos:
       discovery:
         # 服务注册地址  注意要对齐，否则启动不成功
-        server-addr: yyy-nacos:8848
+        server-addr: 127.0.0.1:8848
       config:
         # 配置中心地址  注意要对齐，否则启动不成功
-        server-addr: yyy-nacos:8848
+        server-addr: 127.0.0.1:8848
         # 配置文件格式
         file-extension: yml
-        # 共享配置   这里指的是 application-prod.yml(通用配置可以写在这个文件)
+        # 共享配置   这里指的是 application-dev.yml(通用配置可以写在这个文件)
         shared-configs:
           - application-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
-        namespace: 1015fa17-66f8-45dd-b604-9c2277edfe65
+
+
+

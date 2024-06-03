@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : yangyangyang
+ Source Server         : localhost2
  Source Server Type    : MySQL
- Source Server Version : 80020 (8.0.20)
+ Source Server Version : 80037 (8.0.37)
  Source Host           : localhost:3306
  Source Schema         : yyy-cloud
 
  Target Server Type    : MySQL
- Target Server Version : 80020 (8.0.20)
+ Target Server Version : 80037 (8.0.37)
  File Encoding         : 65001
 
- Date: 15/01/2024 15:38:55
+ Date: 01/06/2024 10:13:23
 */
 
 SET NAMES utf8mb4;
@@ -352,7 +352,7 @@ CREATE TABLE `sys_logininfor` (
   `msg` varchar(255) DEFAULT '' COMMENT '提示信息',
   `access_time` datetime DEFAULT NULL COMMENT '访问时间',
   PRIMARY KEY (`info_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=133 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='系统访问记录';
+) ENGINE=InnoDB AUTO_INCREMENT=138 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='系统访问记录';
 
 -- ----------------------------
 -- Records of sys_logininfor
@@ -391,6 +391,11 @@ INSERT INTO `sys_logininfor` (`info_id`, `user_name`, `ipaddr`, `status`, `msg`,
 INSERT INTO `sys_logininfor` (`info_id`, `user_name`, `ipaddr`, `status`, `msg`, `access_time`) VALUES (130, 'admin', '127.0.0.1', '0', '登录成功', '2024-01-11 09:23:34');
 INSERT INTO `sys_logininfor` (`info_id`, `user_name`, `ipaddr`, `status`, `msg`, `access_time`) VALUES (131, 'admin', '127.0.0.1', '0', '退出成功', '2024-01-11 09:32:39');
 INSERT INTO `sys_logininfor` (`info_id`, `user_name`, `ipaddr`, `status`, `msg`, `access_time`) VALUES (132, 'admin', '127.0.0.1', '0', '登录成功', '2024-01-11 09:33:24');
+INSERT INTO `sys_logininfor` (`info_id`, `user_name`, `ipaddr`, `status`, `msg`, `access_time`) VALUES (133, 'admin', '192.168.65.1', '0', '登录成功', '2024-05-31 19:13:22');
+INSERT INTO `sys_logininfor` (`info_id`, `user_name`, `ipaddr`, `status`, `msg`, `access_time`) VALUES (134, 'admin', '192.168.65.1', '1', '密码输入错误1次', '2024-06-01 10:10:12');
+INSERT INTO `sys_logininfor` (`info_id`, `user_name`, `ipaddr`, `status`, `msg`, `access_time`) VALUES (135, 'admin', '192.168.65.1', '1', '密码输入错误2次', '2024-06-01 10:10:31');
+INSERT INTO `sys_logininfor` (`info_id`, `user_name`, `ipaddr`, `status`, `msg`, `access_time`) VALUES (136, 'admin', '192.168.65.1', '1', '密码输入错误3次', '2024-06-01 10:10:57');
+INSERT INTO `sys_logininfor` (`info_id`, `user_name`, `ipaddr`, `status`, `msg`, `access_time`) VALUES (137, 'admin', '192.168.65.1', '0', '登录成功', '2024-06-01 10:12:37');
 COMMIT;
 
 -- ----------------------------
@@ -816,8 +821,8 @@ CREATE TABLE `sys_user` (
 -- Records of sys_user
 -- ----------------------------
 BEGIN;
-INSERT INTO `sys_user` (`user_id`, `dept_id`, `user_name`, `nick_name`, `user_type`, `email`, `phonenumber`, `sex`, `avatar`, `password`, `status`, `del_flag`, `login_ip`, `login_date`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (1, 103, 'admin', '若依', '00', 'ry@163.com', '15888888888', '1', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', '127.0.0.1', '2023-05-30 17:05:08', 'admin', '2023-05-30 17:05:08', '', NULL, '管理员');
-INSERT INTO `sys_user` (`user_id`, `dept_id`, `user_name`, `nick_name`, `user_type`, `email`, `phonenumber`, `sex`, `avatar`, `password`, `status`, `del_flag`, `login_ip`, `login_date`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2, 105, 'ry', '若依', '00', 'ry@qq.com', '15666666666', '1', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '0', '127.0.0.1', '2023-05-30 17:05:08', 'admin', '2023-05-30 17:05:08', '', NULL, '测试员');
+INSERT INTO `sys_user` (`user_id`, `dept_id`, `user_name`, `nick_name`, `user_type`, `email`, `phonenumber`, `sex`, `avatar`, `password`, `status`, `del_flag`, `login_ip`, `login_date`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (1, 103, 'admin', '若依', '00', 'ry@163.com', '15888888888', '1', '', '$2a$10$2BFWaHxPSytNEd4NZplfV.DJmzydJchFd2IeqwG944K.2lEVlzv2W', '0', '0', '127.0.0.1', '2023-05-30 17:05:08', 'admin', '2023-05-30 17:05:08', '', NULL, '管理员');
+INSERT INTO `sys_user` (`user_id`, `dept_id`, `user_name`, `nick_name`, `user_type`, `email`, `phonenumber`, `sex`, `avatar`, `password`, `status`, `del_flag`, `login_ip`, `login_date`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2, 105, 'ry', '若依', '00', 'ry@qq.com', '15666666666', '1', '', '$2a$10$2BFWaHxPSytNEd4NZplfV.DJmzydJchFd2IeqwG944K.2lEVlzv2W', '0', '0', '127.0.0.1', '2023-05-30 17:05:08', 'admin', '2023-05-30 17:05:08', '', NULL, '测试员');
 COMMIT;
 
 -- ----------------------------
@@ -869,7 +874,7 @@ CREATE TABLE `t_goods` (
   `goods_price` decimal(10,2) DEFAULT '0.00' COMMENT '商品价格',
   `goods_stock` int DEFAULT '0' COMMENT '商品库存，-1表示没有限制',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8 COMMENT='商品表';
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb3 COMMENT='商品表';
 
 -- ----------------------------
 -- Records of t_goods
@@ -895,7 +900,7 @@ CREATE TABLE `t_order` (
   `create_date` datetime DEFAULT NULL COMMENT '订单创建时间',
   `pay_date` datetime DEFAULT NULL COMMENT '支付时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=800 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=800 DEFAULT CHARSET=utf8mb3;
 
 -- ----------------------------
 -- Records of t_order
@@ -1315,7 +1320,7 @@ CREATE TABLE `t_seckill_goods` (
   `start_date` datetime NOT NULL COMMENT '秒杀开始时间',
   `end_date` datetime NOT NULL COMMENT '秒杀结束时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb3;
 
 -- ----------------------------
 -- Records of t_seckill_goods
@@ -1334,7 +1339,7 @@ CREATE TABLE `t_seckill_order` (
   `order_id` bigint NOT NULL COMMENT '订单ID',
   `goods_id` bigint NOT NULL COMMENT '商品ID',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=700 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=700 DEFAULT CHARSET=utf8mb3;
 
 -- ----------------------------
 -- Records of t_seckill_order

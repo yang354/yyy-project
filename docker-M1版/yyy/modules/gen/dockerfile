@@ -13,6 +13,6 @@ WORKDIR /home/yyy
 COPY ./jar/yyy-modules-gen.jar /home/yyy/yyy-modules-gen.jar
 ################################以上可以完成一套流程从指定到创建到使用，如果想使用可以参照上面写法##################################
 # 启动代码生成服务
-ENTRYPOINT ["java","-jar","yyy-modules-gen.jar"]
+ENTRYPOINT ["java","-jar","yyy-modules-gen.jar","--spring.profiles.active=prod"]
 
 #这里copy过去的  在docker-compose都能在volumes: 看到再写一次挂载(包括我们自己新建的或者已经存在的，我们也可以按照这种写法  注意是可写可不写)

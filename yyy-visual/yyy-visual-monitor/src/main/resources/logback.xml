@@ -13,7 +13,7 @@
 		</encoder>
 	</appender>
 
-    <!-- 系统日志输出 -->
+    <!-- 系统日志输出 会输出所有完整的日志 -->
 	<appender name="file_info" class="ch.qos.logback.core.rolling.RollingFileAppender">
 	    <file>${log.path}/info.log</file>
         <!-- 循环政策：基于时间创建日志文件 -->
@@ -59,10 +59,7 @@
         </filter>
     </appender>
 
-    <!-- 系统模块日志级别控制  -->
-	<logger name="com.yyy" level="debug" />
-	<!-- Spring日志级别控制  -->
-	<logger name="org.springframework" level="warn" />
+
 
 	<root level="info">
 		<appender-ref ref="console" />

@@ -7,7 +7,7 @@
 sh ./copy.sh
 
 #切换yaml文件为生产环境
-sh ./setName.sh
+全局替换bootstrap.yml文件的环境即可
 
 
 

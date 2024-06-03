@@ -3,26 +3,27 @@ server:
   port: 8080
 
 # Spring
-spring: 
+spring:
   application:
     # 应用名称
     name: yyy-gateway
-  profiles:
-    # 环境配置
-    active: dev
   cloud:
     nacos:
       discovery:
         # 服务注册地址  注意要对齐，否则启动不成功
-         server-addr: yyy-nacos:8848
+        server-addr: yyy-nacos:8848
+#        server-addr: 127.0.0.1:8848
+        namespace: 1015fa17-66f8-45dd-b604-9c2277edfe65
       config:
         # 配置中心地址  注意要对齐，否则启动不成功
         server-addr: yyy-nacos:8848
+#        server-addr: 127.0.0.1:8848
         # 配置文件格式
         file-extension: yml
         # 共享配置   这里指的是 application-dev.yml(通用配置可以写在这个文件)
         shared-configs:
           - application-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
+        namespace: 1015fa17-66f8-45dd-b604-9c2277edfe65
 
     #部署的时候不使用sentinel，把它注释掉，用就不注释
     sentinel:
@@ -30,7 +31,7 @@ spring:
       eager: true
       transport:
         # 控制台地址
-        dashboard: yyy-nacos:8081
+        dashboard: yyy-sentinel:8081
       # nacos配置持久化
       datasource:
         ds1:

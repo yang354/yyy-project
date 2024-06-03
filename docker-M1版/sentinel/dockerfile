@@ -1,0 +1,6 @@
+# 基础镜像
+FROM bladex/sentinel-dashboard:1.8.1
+# author
+MAINTAINER yyy
+
+
