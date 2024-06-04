@@ -1,4 +1,4 @@
-# 基础镜像
+# 基础镜像   如果是window部署nacos要换成 nacos/nacos-server
 FROM nacos/nacos-server:v2.1.2-slim
 # author
 MAINTAINER yyy

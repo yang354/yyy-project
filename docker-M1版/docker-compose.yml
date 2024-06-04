@@ -19,7 +19,7 @@ services:
 #      - ./rabbitmq/log:/var/log/rabbitmq #挂载 RabbitMQ日志
   yyy-nacos:
     container_name: yyy-nacos
-    image: nacos/nacos-server:v2.1.2-slim
+    image: nacos/nacos-server:v2.1.2-slim  #如果是window部署nacos要换成 nacos/nacos-server
     build:  #启动服务时，先将build中指定的dockerfile打包成镜像，再运行该镜像
       context: ./nacos #指定上下文目录dockerfile所在目录[相对、绝对路径都可以]
     environment:
