@@ -14,6 +14,13 @@
  Date: 01/06/2024 10:13:23
 */
 
+-- 建库
+CREATE DATABASE `yyy-cloud`;
+
+-- 切换数据库
+use `yyy-cloud`;
+
+
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 

@@ -1,11 +1,12 @@
 version : '3.8'
 services:
   yyy-rabbitmq:
-    image: rabbitmq:3.10.6-management
+    #image: rabbitmq:3.10-management  #如果打开这个，表示按照网上镜像执行脚本执行   注意image: rabbitmq:3.10-management 执行优先于 dockerfile: dockerfile，两个只能出现一个
     container_name: yyy-rabbitmq
     # 使用 Dockerfile 构建
     build:
-      context: ./rabbitmq
+      context: ./rabbitmq   #如果打开这个，表示会执行目录下的dockerfile命令，但是优先执行镜像里面定义好的命令，如果和dockerfile命令相同会被覆盖掉
+      dockerfile: dockerfile  #如果打开这个，表示按照dockerfile构建
     environment:
       # 控制台账号密码
       RABBITMQ_DEFAULT_USER: guest
@@ -14,9 +15,8 @@ services:
       - "15672:15672" # 管理界面端口
       - "5672:5672"   # api 端口
     privileged: true #给数据卷赋权限 避免启动出现Permission denied
-#    volumes:  #别打开 会报错创建失败
-#      - ./rabbitmq/data:/var/lib/rabbitmq #挂载 RabbitMQ数据
-#      - ./rabbitmq/log:/var/log/rabbitmq #挂载 RabbitMQ日志
+    volumes:
+      - ./rabbitmq/plugins/rabbitmq_delayed_message_exchange-3.10.2.ez:/opt/rabbitmq/plugins/rabbitmq_delayed_message_exchange-3.10.2.ez
   yyy-nacos:
     container_name: yyy-nacos
     image: nacos/nacos-server:v2.1.2-slim  #如果是window部署nacos要换成 nacos/nacos-server
@@ -48,15 +48,16 @@ services:
       context: ./sentinel #指定上下文目录dockerfile所在目录[相对、绝对路径都可以]
     ports:
       - "8081:8858"
+      - "8719:8719"
     environment:
       - AUTH_USERNAME=sentinel
       - AUTH_PASSWORD=sentinel
-    platform: linux/amd64
   yyy-mysql:
     container_name: yyy-mysql
-    image: mysql:8.0
+    #image: mysql:8.0  #如果打开这个，表示按照网上镜像执行脚本执行
     build:  #启动服务时，先将build中指定的dockerfile打包成镜像，再运行该镜像
       context: ./mysql #指定上下文目录dockerfile所在目录[相对、绝对路径都可以]
+      dockerfile: dockerfile  #如果打开这个，表示按照dockerfile构建
     ports:
       - "3306:3306"
     volumes:  #表示可以动态修改，修改外面的文件，容器内的文件也会同步修改 （像日志文件，配置文件，数据文件 都可以用挂载，方便查看日志和数据或修改配置）
@@ -72,7 +73,6 @@ services:
           '--lower-case-table-names=1'
         ]
     environment:
-      MYSQL_DATABASE: 'yyy-cloud'
       MYSQL_ROOT_PASSWORD: 'root'
   yyy-redis:
     container_name: yyy-redis

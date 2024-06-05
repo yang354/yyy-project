@@ -1,0 +1,70 @@
+挂载的三种方式
+1、自定义目录挂载-需要在dockerfile文件中创建目录在后续操作
+例如：- ./nginx/html/dist:/home/yyy/projects/yyy-ui
+
+dockerfile文件中的操作
+# 挂载目录  给镜像设置挂载目录
+VOLUME /home/yyy/projects/yyy-ui
+# 创建目录   给镜像创建目录
+RUN mkdir -p /home/yyy/projects/yyy-ui
+# 指定路径   给镜像指定路径
+WORKDIR /home/yyy/projects/yyy-ui
+# 复制html文件到路径  开始复制
+COPY ./html/dist /home/yyy/projects/yyy-ui
+
+
+2、镜像原有目录或者文件挂载-不用创建dockerfile文件中创建目录,直接copy命令即可，如果没有文件需要上传，可以只挂载不执行copy命令也可以
+    一般挂载文件都是需要copy上传，而一般目录可copy上传也可不上传
+例如：- ./nginx/conf/nginx.conf:/etc/nginx/nginx.conf
+
+dockerfile文件中的操作
+COPY ./conf/nginx.conf /etc/nginx/nginx.conf
+
+
+如果没有文件需要上传
+例如：- ./nginx/conf.d:/etc/nginx/conf.d
+
+dockerfile文件中的操作
+无操作
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~docker-compose模版~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+docker-compose文件
+  yyy-xxx:
+    container_name: yyy-xxx
+    image: 镜像   #这个如果打开，下面的dockerfile不打开，表示按照image构建-不用重新打包成我们新的镜像，直接使用原有的
+    build:  #启动服务时，先将build中指定的dockerfile打包成镜像，再运行该镜像
+      context: ./xxx #指定上下文目录dockerfile所在目录[相对、绝对路径都可以]
+      #dockerfile:dockerfile #这个如果打开，上面的image不打开，表示按照dockerfile文件构建-重新打包成我们新的一个镜像
+    ports:
+      - "80:80"
+    volumes:  #表示可以动态修改，修改外面的文件，容器内的文件也会同步修改 （像日志文件，配置文件，数据文件 都可以用挂载，方便查看日志和数据或修改配置）
+      - ./nginx/html/dist:/home/yyy/projects/yyy-ui #自定义目录挂载，需要在dockerfile文件中创建目录在后续操作
+      - ./nginx/conf/nginx.conf:/etc/nginx/nginx.conf #镜像原有目录或者文件挂载，不用创建dockerfile文件中创建目录,直接copy命令即可，如果没有文件需要上传，可以只挂载不执行copy命令也可以
+      - ./nginx/logs:/var/log/nginx #镜像原有目录或者文件挂载，不用创建dockerfile文件中创建目录,直接copy命令即可，如果没有文件需要上传，可以只挂载不执行copy命令也可以
+      - ./nginx/conf.d:/etc/nginx/conf.d #镜像原有目录或者文件挂载，不用创建dockerfile文件中创建目录,直接copy命令即可，如果没有文件需要上传，可以只挂载不执行copy命令也可以
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~dockerfile模板~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+dockerfile文件
+# 基础镜像
+FROM 镜像
+# author
+MAINTAINER yyy
+
+# 挂载目录  给镜像设置挂载目录
+VOLUME /home/yyy/projects/yyy-ui
+# 创建目录   给镜像创建目录
+RUN mkdir -p /home/yyy/projects/yyy-ui
+# 指定路径   给镜像指定路径
+WORKDIR /home/yyy/projects/yyy-ui
+# 复制html文件到路径  开始复制
+COPY ./html/dist /home/yyy/projects/yyy-ui
+################################以上可以完成一套流程从指定到创建到使用，如果想使用可以参照上面写法##################################
+# 复制conf文件到路径   左边是自己现有的目录    右边是镜像里面拥有的目录
+COPY ./conf/nginx.conf /etc/nginx/nginx.conf
+
+#这里copy过去的  在docker-compose都能在volumes: 看到再写一次挂载(包括我们自己新建的或者已经存在的，我们也可以按照这种写法  注意是可写可不写)
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
