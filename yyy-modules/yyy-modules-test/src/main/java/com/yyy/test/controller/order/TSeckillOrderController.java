@@ -47,6 +47,13 @@ public class TSeckillOrderController implements InitializingBean {
     private Map<Long, Boolean> EmptyStockMap = new HashMap<>();
 
 
+    @ApiOperation("testFeign")
+    @GetMapping(value = "/testFeign")
+    public void testFeign() {
+        System.out.println("测试远程调用");
+    }
+
+
     /**
      * 库存扣减
      * 先在redis中通过 increment 进行库存的扣减，increment 是一个原子操作，它可以避免并发情况下多个线程对库存进行扣减时产生的数据不一致的问题。

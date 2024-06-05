@@ -23,6 +23,10 @@ public class RemoteTestFallbackFactory implements FallbackFactory<RemoteTestServ
             public R doOrder(Long goodsId) {
                 return R.fail("下订单失败:" + throwable.getMessage());
             }
+            @Override
+            public R testFeign(){
+                return R.fail("测试调用失败:" + throwable.getMessage());
+            }
         };
 
     }

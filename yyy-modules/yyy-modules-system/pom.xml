@@ -88,6 +88,11 @@
             <artifactId>yyy-common-file</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.yyy</groupId>
+            <artifactId>yyy-api-test</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>

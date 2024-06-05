@@ -3,6 +3,7 @@ package com.yyy.system.controller;
 import java.util.List;
 
 import com.yyy.system.api.vo.SysDeptVO;
+import com.yyy.test.api.RemoteTestService;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -25,6 +26,8 @@ import com.yyy.common.security.utils.SecurityUtils;
 
 import com.yyy.system.service.ISysDeptService;
 
+import javax.annotation.Resource;
+
 /**
  * 部门信息
  * 
@@ -37,6 +40,9 @@ public class SysDeptController extends BaseController
     @Autowired
     private ISysDeptService deptService;
 
+    @Resource
+    private RemoteTestService remoteTestService;
+
     /**
      * 获取部门列表
      */
@@ -45,6 +51,8 @@ public class SysDeptController extends BaseController
     public AjaxResult list(SysDeptVO dept)
     {
         List<SysDeptVO> depts = deptService.selectDeptList(dept);
+        //测试远程调用
+        remoteTestService.testFeign();
         return success(depts);
     }
 

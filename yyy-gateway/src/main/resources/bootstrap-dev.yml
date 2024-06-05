@@ -30,10 +30,21 @@ spring:
         dashboard: 127.0.0.1:8081
       # nacos配置持久化
       datasource:
+        # 名称任意, 代表数据源
         ds1:
           nacos:
             server-addr: 127.0.0.1:8848
-            dataId: sentinel-yyy-gateway
+            dataId: gateway-flow-rule-sentinel
             groupId: DEFAULT_GROUP
             data-type: json
             rule-type: gw-flow
+        ds2:
+          nacos:
+            server-addr: 127.0.0.1:8848
+            dataId: gateway-flow-rule-api-sentine
+            groupId: DEFAULT_GROUP
+            data-type: json
+            rule-type: gw_api_group
+
+
+

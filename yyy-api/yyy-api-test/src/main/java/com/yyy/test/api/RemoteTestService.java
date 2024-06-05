@@ -18,4 +18,8 @@ public interface RemoteTestService {
     @GetMapping(value = "/tSeckillOrder/doOrder/{goodsId}")
     public R doOrder(@PathVariable("goodsId") Long goodsId);
     //注意远程调用接口最好加上合适的注解例如@PathVariable、@RequestParam等等，否则会报不支持GET请求或不支持POST请求等
+
+
+    @GetMapping(value = "/tSeckillOrder/testFeign")
+    public R testFeign();
 }
