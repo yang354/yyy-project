@@ -7,10 +7,6 @@ usage() {
 }
 
 
-# copy sql
-echo "begin copy sql "
-cp ../sql/yyy-cloud.sql ./mysql/db
-cp ../sql/yyy-config.sql ./mysql/db
 
 # copy html
 echo "begin copy html "
