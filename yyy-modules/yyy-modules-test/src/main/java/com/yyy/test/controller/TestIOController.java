@@ -102,7 +102,7 @@ public class TestIOController {
             wb = new XSSFWorkbook(in);
             baos = new ByteArrayOutputStream();//构建字节输出流
 
-            ExcelUtils.createRow(wb, 0, excelContent2, -4); //在模板文件追加内容->等于导出的数据 这样我们省去构建模版头内容的步骤
+            ExcelUtils.createRow(wb, 0, excelContent2, 1); //在模板文件追加内容->等于导出的数据 这样我们省去构建模版头内容的步骤
             wb.write(baos);  //读取到的excel内容写入字节输出流
 
             bytes = baos.toByteArray();  //返回base64文件流 需要根据对应的文件前缀拼接才会获取到 例如图片的是 'data:image/jpeg;base64,'+res.data

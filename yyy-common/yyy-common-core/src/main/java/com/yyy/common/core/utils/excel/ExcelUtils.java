@@ -43,42 +43,49 @@ public class ExcelUtils {
      * @param wb
      * @param sheetIndex
      * @param lists      内容
-     * @param num        应减多少行数，能到达追加文本的后面(不然有时候不准，并不是刚好在后面追加，有时候空几行),不知道传多少就传null
+     * @param num        偏移数
      */
-    public static void createRow(XSSFWorkbook wb, int sheetIndex, List<List<String>> lists, Integer num) {
+    public static void createRow(XSSFWorkbook wb, int sheetIndex, List<List<String>> lists, int num) {
         //单元格样式1
         CellStyle cellStyle1 = ExcelStyleUtil.contextAlignCenterStyleRed(wb);
         //单元格样式2
         CellStyle cellStyle2 = ExcelStyleUtil.contextAlignCenterStyleBlack(wb);
 
         XSSFSheet sheet = wb.getSheetAt(sheetIndex);
-        Row row;
-        int lastRowNum = 0;
-        if (ObjectUtils.isEmpty(num)) {
-            lastRowNum = sheet.getLastRowNum();
-            System.out.println(lastRowNum + "~~~~~~~~~~~~");
-        } else {
-            lastRowNum = sheet.getLastRowNum() + num;
-        }
-        for (int i = 0; i < lists.size(); i++) {
-            System.out.println(lastRowNum + "^^^^^^^^^^^^^^^^^^^^^^");
-            row = sheet.createRow(++lastRowNum);
 
+        // 增加逻辑来准确找到最后一个非空行
+        int lastNonEmptyRowNum = sheet.getLastRowNum();
+        for (int i = lastNonEmptyRowNum; i >= 0; i--) {
+            Row row = sheet.getRow(i);
+            if (row != null && !isRowEmpty(row)) {
+                lastNonEmptyRowNum = i;
+                break;
+            }
+        }
+//        System.out.println("lastNonEmptyRowNum~~~~"+lastNonEmptyRowNum);
+        // 根据num参数决定是否需要额外偏移  Excel的行索引是从0开始的
+        int lastRowNum = lastNonEmptyRowNum + (num > 0 ? num : 0);
+
+        for (int i = 0; i < lists.size(); i++) {
+            Row row = sheet.createRow(++lastRowNum); //即先加1，再使用值
             List<String> addOneRowData = lists.get(i);
             for (int j = 0; j < addOneRowData.size(); j++) {
-                String str = addOneRowData.get(j);
-                if (j == 0) {
-                    Cell cell = row.createCell(j);
-                    cell.setCellValue(str);
-                    cell.setCellStyle(cellStyle1);
-                } else {
-                    Cell cell = row.createCell(j);
-                    cell.setCellValue(str);
-                    cell.setCellStyle(cellStyle2);
-                }
+                Cell cell = row.createCell(j);
+                cell.setCellValue(addOneRowData.get(j));
+                cell.setCellStyle(j == 0 ? cellStyle1 : cellStyle2);
             }
         }
 
+    }
+
+    private static boolean isRowEmpty(Row row) {
+        for (int c = row.getFirstCellNum(); c < row.getLastCellNum(); c++) {
+            Cell cell = row.getCell(c, Row.MissingCellPolicy.RETURN_NULL_AND_BLANK);
+            if (cell != null && cell.getCellType() != CellType.BLANK) {
+                return false; // 如果有任何非空单元格，行不为空
+            }
+        }
+        return true; // 所有单元格要么为空，要么是BLANK类型，认为行为空
     }
 
 
