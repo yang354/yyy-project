@@ -3,6 +3,8 @@ package com.yyy.system.service;
 import java.util.List;
 
 import com.yyy.system.api.vo.SysUserVO;
+import com.yyy.system.dto.AnalysisExcelResultDTO;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 用户 业务层
@@ -204,4 +206,6 @@ public interface ISysUserService
      * @return 结果
      */
     public String importUser(List<SysUserVO> userList, Boolean isUpdateSupport, String operName);
+
+    public AnalysisExcelResultDTO importUserByExcel(MultipartFile file);
 }

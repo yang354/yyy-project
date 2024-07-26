@@ -2,6 +2,7 @@ package com.yyy.test.controller;
 
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.github.pagehelper.util.StringUtil;
 import com.yyy.common.core.annotation.CountTime;
 import com.yyy.common.core.domain.R;
@@ -18,10 +19,12 @@ import com.yyy.test.service.AccountInfoService;
 import com.yyy.test.thread.AsyncFactory;
 import com.yyy.test.thread.AsyncManager;
 import com.yyy.test.vo.CityEntityVO;
+import com.yyy.test.vo.FromRequestVO;
 import com.yyy.test.vo.TestUserMemo;
 import com.yyy.test.vo.TestUserVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,10 +42,7 @@ import javax.annotation.Resource;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
@@ -60,6 +60,22 @@ public class TestController {
 
     @Autowired
     private SmsService smsService;
+
+
+    @ApiOperation("测试获取前端表单请求")
+    @PostMapping("/getFromRequest")
+    @ResponseBody
+    public R getFromRequest( FromRequestVO fromRequestVO) {
+
+        System.out.println("获取到前端返回数据~~"+fromRequestVO.toString());
+        for (String m:fromRequestVO.getMultiSelect()){
+            System.out.println("~~~"+m);
+        }
+
+
+        return R.ok("请求成功");
+    }
+
 
 
     @ApiOperation("测试获取手机验证码")

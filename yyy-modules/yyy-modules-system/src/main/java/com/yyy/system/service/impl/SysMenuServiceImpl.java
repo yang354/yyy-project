@@ -180,12 +180,20 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
             router.setQuery(menu.getQuery());
             router.setMeta(new MetaVo(menu.getMenuName(), menu.getIcon(), StringUtils.equals("1", menu.getIsCache()), menu.getPath()));
             List<SysMenuVO> cMenus = menu.getChildren();
+            //如果SysMenuVO有子菜单并且类型为目录（TYPE_DIR），则设置alwaysShow为true，redirect为"noRedirect"，并递归调用此方法处理子菜单。
+            //设置 alwaysShow 为 true。
+            //设置 redirect 为 "noRedirect"。
+            //递归调用 buildMenus 方法处理子菜单，并将结果赋值给 RouterVo 的 children 属性。
             if (!cMenus.isEmpty() && cMenus.size() > 0 && UserConstants.TYPE_DIR.equals(menu.getMenuType()))
             {
                 router.setAlwaysShow(true);
                 router.setRedirect("noRedirect");
                 router.setChildren(buildMenus(cMenus));
             }
+            //如果菜单是一个外部框架（通过isMenuFrame()判断），则创建一个子路由并添加到当前路由中
+            //清空 RouterVo 的 meta 属性。
+            //创建一个子路由，并设置其 path、component、name 和 meta 属性。
+            //将子路由添加到 RouterVo 的 children 属性。
             else if (isMenuFrame(menu))
             {
                 router.setMeta(null);
@@ -199,6 +207,11 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
                 childrenList.add(children);
                 router.setChildren(childrenList);
             }
+            //如果菜单是一个内部链接且其父ID为0，则创建一个特殊的内部链接路由
+            //设置 RouterVo 的 meta 属性。
+            //设置 path 为 /。
+            //创建一个子路由，并设置其 path、component、name 和 meta 属性。
+            //将子路由添加到 RouterVo 的 children 属性。
             else if (menu.getParentId().intValue() == 0 && isInnerLink(menu))
             {
                 router.setMeta(new MetaVo(menu.getMenuName(), menu.getIcon()));
@@ -431,6 +444,12 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
         return menu.getParentId().intValue() == 0 && UserConstants.TYPE_MENU.equals(menu.getMenuType())
                 && menu.getIsFrame().equals(UserConstants.NO_FRAME);
     }
+    /**
+     * menu.getParentId().intValue() == 0：检查菜单项的父ID是否为0。如果是，这意味着这是一个顶级菜单项。
+     * UserConstants.TYPE_MENU.equals(menu.getMenuType())：检查菜单项的类型是否为 TYPE_MENU。如果类型匹配，这意味着这是一个菜单项而非目录。
+     * menu.getIsFrame().equals(UserConstants.NO_FRAME)：检查菜单项的 isFrame 属性是否为 NO_FRAME。如果等于 NO_FRAME，这意味着这不是一个外部框架链接。
+     * 如果这三个条件都满足，则认为这是一个内部跳转的菜单项，方法返回 true；否则返回 false。
+     */
 
     /**
      * 是否为内链组件
@@ -442,6 +461,11 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
     {
         return menu.getIsFrame().equals(UserConstants.NO_FRAME) && StringUtils.ishttp(menu.getPath());
     }
+    /**
+     * menu.getIsFrame().equals(UserConstants.NO_FRAME)：检查菜单项的 isFrame 属性是否为 NO_FRAME。如果等于 NO_FRAME，这意味着这不是一个外部框架链接。
+     * StringUtils.ishttp(menu.getPath())：检查菜单项的 path 属性是否是一个有效的 HTTP URL。如果是一个有效的 HTTP URL，则这通常意味着这是一个指向外部资源的链接。
+     * 如果这两个条件都满足，则认为这是一个内部链接组件，方法返回 true；否则返回 false。
+     */
 
     /**
      * 是否为parent_view组件

@@ -6,19 +6,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
 
+import com.yyy.common.core.exception.GlobalException;
 import com.yyy.system.api.vo.SysDeptVO;
 import com.yyy.system.api.vo.SysUserVO;
+import com.yyy.system.dto.AnalysisExcelResultDTO;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import com.yyy.common.core.constant.UserConstants;
 import com.yyy.common.core.domain.R;
@@ -90,6 +85,26 @@ public class SysUserController extends BaseController
         ExcelUtil<SysUserVO> util = new ExcelUtil<SysUserVO>(SysUserVO.class);
         util.exportExcel(response, list, "用户数据");
     }
+
+
+    @PostMapping("/importUserByExcel")
+    public AjaxResult importUserByExcel(MultipartFile file) {
+        if (file == null) {
+            return AjaxResult.error("请选择文件!");
+        }
+
+        AnalysisExcelResultDTO analysisExcelResultDTO = null;
+        try {
+            analysisExcelResultDTO = userService.importUserByExcel(file);
+        } catch (GlobalException e) {
+            e.printStackTrace();
+            return AjaxResult.error(e.getMessage());
+        } catch (Exception e) {
+            return AjaxResult.error("上传文件格式请使用规范模板并规范填写!");
+        }
+        return AjaxResult.success("新增成功!", analysisExcelResultDTO);
+    }
+
 
     @Log(title = "用户管理", businessType = BusinessType.IMPORT)
     @RequiresPermissions("system:user:import")

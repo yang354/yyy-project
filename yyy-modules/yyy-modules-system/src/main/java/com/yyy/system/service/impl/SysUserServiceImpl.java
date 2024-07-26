@@ -1,16 +1,26 @@
 package com.yyy.system.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.*;
+import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.validation.Validator;
 
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.yyy.common.core.exception.GlobalException;
+import com.yyy.common.core.utils.excel.ExcelUtils;
 import com.yyy.system.domain.SysUser;
 import com.yyy.system.api.vo.SysUserVO;
+import com.yyy.system.dto.AnalysisExcelResultDTO;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -32,6 +42,7 @@ import com.yyy.system.mapper.SysUserPostMapper;
 import com.yyy.system.mapper.SysUserRoleMapper;
 import com.yyy.system.service.ISysConfigService;
 import com.yyy.system.service.ISysUserService;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 用户 业务层处理
@@ -63,6 +74,10 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 
     @Autowired
     protected Validator validator;
+
+    @Value("${export.exportUserFaile}")
+    private String exportUerFailePath;
+
 
     /**
      * 根据条件分页查询用户列表
@@ -472,6 +487,150 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         userPostMapper.deleteUserPost(userIds);
         return userMapper.deleteUserByIds(userIds);
     }
+
+    @Override
+    public AnalysisExcelResultDTO importUserByExcel(MultipartFile file) {
+        if(file==null){
+            return null;
+        }
+        //Excel文件内容
+        List<List<String>> excelContent = null;
+        //Excel错误内容记录
+        List<List<String>> errorContent = new ArrayList<>();
+
+        try {
+            InputStream in = new BufferedInputStream(file.getInputStream());
+            org.apache.poi.util.IOUtils.closeQuietly(file.getInputStream());
+            //读取文件内容
+            excelContent = ExcelUtils.getExcelContent(in, 0,null,8);
+        }catch (IOException e) {
+            throw new GlobalException("文件解析失败！");
+        }
+        if(CollectionUtils.isEmpty(excelContent)||excelContent.size()==0){
+            throw new GlobalException("文件内容为空！");
+        }
+
+        //验证表头
+        List<String> requiredHeadersOrder = Arrays.asList("用户序号", "部门编号", "*登录名称","*用户名称","用户邮箱","手机号码","用户性别","帐号状态");
+        boolean isCorrectOrder = checkColumnNamesWithOrder(excelContent.get(0), requiredHeadersOrder); //因为第一行是表头，所以索引为0
+        if (!isCorrectOrder) {
+            throw new GlobalException("Excel模板列名顺序不正确！");
+        }
+
+        //去除提示及表头
+        excelContent = processExcelContent(excelContent, true, 1); // 去除前一行
+
+        int successNum=0;//成功次数
+
+        for(List<String> s:excelContent) {
+            //数据行-校验
+            String dataErr=checkRowData(s);
+            if(!StringUtils.isEmpty(dataErr)){
+                List<String> errList = new ArrayList<>();
+                errList.add(dataErr);
+                errList.addAll(s);
+                errorContent.add(errList);
+                continue;
+            }
+            //数据行校验都通过了，直接录入当前行用户信息
+            SysUserVO user = new SysUserVO();
+            user.setUserName(s.get(2));
+            user.setNickName(s.get(3));
+            this.insertUser(user);
+            successNum++;
+        }
+        AnalysisExcelResultDTO analysisExcelResultDTO = new AnalysisExcelResultDTO();
+        analysisExcelResultDTO.setErrorNum(errorContent.size());
+        System.out.println(errorContent.toString());
+        analysisExcelResultDTO.setSuccessNum(successNum);
+        try {
+            ClassPathResource classPathResource = new ClassPathResource(exportUerFailePath);
+            InputStream in = classPathResource.getInputStream();
+
+            XSSFWorkbook wb = new XSSFWorkbook(in);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();//构建字节输出流
+
+            try {
+                ExcelUtils.createRow(wb, 0, errorContent, 1); //在模板文件追加内容->等于导出的数据 这样我们省去构建模版头内容的步骤
+                wb.write(baos);
+            } catch (Exception e){
+                e.printStackTrace();
+            } finally {
+                org.apache.poi.util.IOUtils.closeQuietly(baos);
+                org.apache.poi.util.IOUtils.closeQuietly(wb);
+            }
+            byte[] bytes = baos.toByteArray(); //返回base64文件流 需要根据对应的文件前缀拼接才会获取到 例如图片的是 'data:image/jpeg;base64,'+res.data
+
+            analysisExcelResultDTO.setContent(bytes);
+
+            return analysisExcelResultDTO;
+        } catch (Exception e) {
+            log.error("--------写入错误文件失败:{}",e);
+        }
+        return null;
+    }
+
+    // 验证表头
+    public static boolean checkColumnNamesWithOrder(List<String> row, List<String> expectedHeadersInOrder) {
+        // 比较实际表头与期望表头的顺序是否一致
+        return row.equals(expectedHeadersInOrder);
+    }
+
+    //去除表头
+    public List<List<String>> processExcelContent(List<List<String>> excelContent, boolean removeHeader, int headerRowCount) {
+        // 根据参数决定是否移除表头
+        if (removeHeader && headerRowCount > 0) {
+            // 确保headerRowCount不大于excelContent的大小，避免越界
+            int rowsToRemove = Math.min(headerRowCount, excelContent.size());
+            for (int i = 0; i < rowsToRemove; i++) {
+                excelContent.remove(0);
+            }
+        }
+        return excelContent;
+    }
+
+
+    private String checkRowData(List<String> row) {
+        try {
+            // 检查必填项是否为空
+            //row.get(2)是空的（即第3列为空）或者row.get(3)是空的（即第4列为空）为true 否则，如果这两列都有非空值，它就被赋值为false
+            boolean hasEmptyMandatoryFields = StringUtils.isEmpty(row.get(2)) || StringUtils.isEmpty(row.get(3));
+
+            boolean hasFilledFields = false; // 用于标记该行是否有任何非空项
+            for (int i = 0; i < row.size(); i++) { // 遍历整行
+                if (!StringUtils.isEmpty(row.get(i))) {
+                    hasFilledFields = true;
+                    break; // 找到一个非空项后即可停止循环
+                }
+            }
+            // 只有当存在非空项且有必填项为空时，才认为是错误
+            if (hasFilledFields && hasEmptyMandatoryFields) {  //true&&true    true&&false
+                return "必填项为空";
+            }
+
+            //检查数据输入是否符合标准
+            // 示例：假设第5列为邮箱，进行简单格式验证
+            if (!StringUtils.isEmpty(row.get(4))){
+                String emailPattern = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
+                if (Pattern.matches(emailPattern, row.get(4))) {
+                    // 邮箱格式正确
+                } else {
+                    return "邮箱格式错误";
+                }
+            }
+            //.....
+
+            //检查用户是否存在
+            SysUserVO u = userMapper.selectUserByUserName(row.get(2));
+            if (!ObjectUtils.isEmpty(u)) {
+                return "账号已存在";
+            }
+        }catch (Exception e){
+            return  "其他错误，请检查输入内容";
+        }
+        return null;
+    }
+
 
     /**
      * 导入用户数据
